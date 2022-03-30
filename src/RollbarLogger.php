@@ -85,11 +85,24 @@ class RollbarLogger extends AbstractLogger
     }
 
     /**
+     * This is the wrapper for psr-3
+     *
+     * @param mixed $level
+     * @param \Stringable|string $message
+     * @param array $context
+     * @throws Throwable
+     */
+    public function log($level, \Stringable|string $message, array $context = []): void
+    {
+       $this->logOriginal($level,$message,$context);
+    }
+
+    /**
      * @param Level|string $level
      * @param mixed $toLog
      * @param array $context
      */
-    public function log($level, $toLog, array $context = array())
+    public function logOriginal($level, $toLog, array $context = array())
     {
         if ($this->disabled()) {
             $this->verboseLogger()->notice('Rollbar is disabled');

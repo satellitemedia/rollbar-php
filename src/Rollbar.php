@@ -90,7 +90,19 @@ class Rollbar
         return self::$logger->scope($config);
     }
 
-    public static function log($level, $toLog, $extra = array())
+    /**
+     * This the wrapper for psr-3
+     * 
+     * @param $level
+     * @param \Stringable|string $message
+     * @param array $context
+     */
+    public function log($level, \Stringable|string $message, array $context = [])
+    {
+        $this->logOriginal($level,$message,$context);
+    }
+
+    public static function logOriginal($level, $toLog, $extra = array())
     {
         if (is_null(self::$logger)) {
             return self::getNotInitializedResponse();
