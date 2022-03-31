@@ -94,7 +94,20 @@ class RollbarLogger extends AbstractLogger
      */
     public function log($level, \Stringable|string $message, array $context = []): void
     {
-       $this->logOriginal($level,$message,$context);
+        //This was implemented for Satellite to only record the errors to rollbar
+        $allowedLevels = [Level::EMERGENCY,Level::CRITICAL,Level::ERROR];
+
+        if ($level instanceof Level) {
+            $level = (string)$level;
+        } elseif (!$this->levelFactory->isValidLevel($level)) {
+            $exception = new \Psr\Log\InvalidArgumentException("Invalid log level '$level'.");
+            $this->verboseLogger()->error($exception->getMessage());
+            throw $exception;
+        }
+
+        if (in_array($level, $allowedLevels)) {
+            $this->logOriginal($level, $message, $context);
+        }
     }
 
     /**
